@@ -26,7 +26,7 @@ def postfix(eq):
 
         if eq[i] == '(':
             stack.append(eq[i])
-        elif eq[i].isdigit():
+        elif eq[i].isdigit() or eq[i] == '.':
             if wasNum == True:
                 digitCount = digitCount + 1
             else:
@@ -59,17 +59,23 @@ def postfix(eq):
 def modified_postfix(post, digit):
     modified = []
     i = 0
-    while i < len(digit) and post != []:
+    while i <= len(digit) and post != []:
         if post[0].isdigit():
             modified.append(post[0:digit[i]])
             post = post[digit[i]:]
-            i=i+1
         else:
             modified.append(post[0])
             post = post[1:]
             i=i-1
+        i = i + 1
     return modified
 
+def isNum(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 def eq_eval(mod, digit):
     new_post = []
@@ -77,12 +83,11 @@ def eq_eval(mod, digit):
         new_post.append(''.join(mod[i]))
     i = 0
     while len(new_post) != 1:
-        if new_post[i].isdigit():
-            tempi=0
+        if isNum(new_post[i]) or new_post[i].isdigit():
             i=i+1
         else:
-            pop1 = int(new_post[i-2])
-            pop2 = int(new_post[i-1])
+            pop1 = float(new_post[i-2])
+            pop2 = float(new_post[i-1])
             op = new_post[i]
             if op == '^':
                 res = pop1 ** pop2
@@ -91,9 +96,9 @@ def eq_eval(mod, digit):
             elif op == '/':
                 res = pop1 / pop2
             elif op == '+':
-                res == pop1 + pop2
+                res = pop1 + pop2
             elif op == '-':
-                res == pop1 - pop2
+                res = pop1 - pop2
             else:
                 print("Error in operation determination")
             'WHY THIS NO WORK'
@@ -101,12 +106,11 @@ def eq_eval(mod, digit):
             new_post.pop(i)
             new_post.pop(i-1)
             i = 0  
-    print(new_post)
+    return new_post
 
 
-a = postfix("123*2^10+1")
+a = postfix("1/(2^2)")
 b = modified_postfix(a[0], a[1])
-eq_eval(b, a[1])
+c = eq_eval(b, a[1])
 
-
-
+print(c)
